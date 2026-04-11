@@ -24,4 +24,10 @@ export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 # Gazebo model path so turtlebot3 models are found
 export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH:+$GAZEBO_MODEL_PATH:}/opt/ros/humble/share/turtlebot3_gazebo/models
 
+# Force software rendering so Gazebo works without a real GPU / proper GLX
+export LIBGL_ALWAYS_SOFTWARE=1
+export GALLIUM_DRIVER=llvmpipe
+export MESA_GL_VERSION_OVERRIDE=3.3
+export OGRE_RTT_MODE=Copy
+
 echo "[setup_env] ROS 2 Humble environment loaded. TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL}"
