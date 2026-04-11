@@ -1,73 +1,10 @@
-# ROS 2 build artifacts
+# Build
 build/
 install/
 log/
-logs/
-devel/
-devel_isolated/
-build_isolated/
-bin/
-lib/
 
 # Python
 __pycache__/
-*.py[cod]
-*.egg-info/
-.eggs/
-dist/
-msg_gen/
-srv_gen/
+.mypy_cache/
 
-# CMake
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
-CMakeLists.txt.user
-
-# Colcon
-.colcon_build_artifact
-COLCON_IGNORE
-CATKIN_IGNORE
-
-# Generated dynamic reconfigure
-*.cfgc
-/cfg/cpp/
-/cfg/*.py
-
-# Generated docs
-*.dox
-*.wikidoc
-
-# Generated ROS action messages
-msg/*Action.msg
-msg/*ActionFeedback.msg
-msg/*ActionGoal.msg
-msg/*ActionResult.msg
-msg/*Feedback.msg
-msg/*Goal.msg
-msg/*Result.msg
-msg/_*.py
-srv/_*.py
-
-# Editor / IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.#*
-qtcreator-*
-*.user
-.project
-.cproject
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Docker
-.dockerignore
+.rules

@@ -5,11 +5,8 @@ services:
       dockerfile: Dockerfile
     image: kodo-nav2-patrol:latest
     container_name: kodo
-    # Allow GUI applications (Gazebo, RViz) via X11
     environment:
-      - DISPLAY=${DISPLAY:-:0}
-      - QT_X11_NO_MITSHM=1
-      - TURTLEBOT3_MODEL=waffle
+      - DISPLAY
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - .:/ros2_ws:rw

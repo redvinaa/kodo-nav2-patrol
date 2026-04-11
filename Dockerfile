@@ -1,8 +1,6 @@
 FROM osrf/ros:humble-desktop-full
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TURTLEBOT3_MODEL=waffle
-ENV ROS_DOMAIN_ID=0
 
 # Install tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
