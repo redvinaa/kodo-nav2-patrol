@@ -1,0 +1,11 @@
+# Build
+build/
+install/
+log/
+
+# Python
+__pycache__/
+.mypy_cache/
+
+# Git
+.git/
