@@ -1,0 +1,3 @@
+[submodule "gazebo_models"]
+	path = gazebo_models
+	url = https://github.com/osrf/gazebo_models
