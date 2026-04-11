@@ -4,7 +4,7 @@ project(patrol_simulation)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY worlds config
+  DIRECTORY worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
