@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# setup_env.sh
 # Source this file from .bashrc for a fully configured ROS 2 + workspace environment.
 # It is automatically sourced on login inside the Docker container.
 
@@ -13,21 +12,18 @@ if [ -f /ros2_ws/install/setup.bash ]; then
     source /ros2_ws/install/setup.bash
 fi
 
-# Turtlebot3 model selection (waffle provides lidar + camera)
 export TURTLEBOT3_MODEL=waffle
-
-# ROS domain isolation
 export ROS_DOMAIN_ID=0
-
 export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
 # Gazebo model path so turtlebot3 models are found
-export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH:+$GAZEBO_MODEL_PATH:}/opt/ros/humble/share/turtlebot3_gazebo/models
+export GAZEBO_MODEL_PATH="${GAZEBO_MODEL_PATH}:/opt/ros/humble/share/turtlebot3_gazebo/models:/ros2_ws/gazebo_models"
 
 # Force software rendering so Gazebo works without a real GPU / proper GLX
 export LIBGL_ALWAYS_SOFTWARE=1
-export GALLIUM_DRIVER=llvmpipe
-export MESA_GL_VERSION_OVERRIDE=3.3
-export OGRE_RTT_MODE=Copy
+# export GALLIUM_DRIVER=llvmpipe
+# export MESA_GL_VERSION_OVERRIDE=3.3
+# export OGRE_RTT_MODE=Copy
+export TURTLEBOT3_MODEL=waffle
 
-echo "[setup_env] ROS 2 Humble environment loaded. TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL}"
+echo "[setup_env] ROS 2 Humble environment loaded."
