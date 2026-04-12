@@ -25,10 +25,6 @@ RUN apt-get update && \
     rosdep install --from-paths src --ignore-src -y --rosdistro humble && \
     rm -rf /var/lib/apt/lists/*
 
-# # Setup environment script
-# COPY setup_env.sh /ros2_ws/setup_env.sh
-# RUN chmod +x /ros2_ws/setup_env.sh
-
 # Source setup on every bash login
 RUN echo "source /ros2_ws/setup_env.bash" >> /root/.bashrc
 
