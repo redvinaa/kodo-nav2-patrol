@@ -7,4 +7,5 @@ log/
 __pycache__/
 .mypy_cache/
 
-.rules
+# Git
+.git/

@@ -1,134 +1,79 @@
-# 🧭 Kodo Nav2 Patrol System
+# kodo-nav2-patrol
 
-## Project Overview
-A modular **ROS 2 + Nav2 based patrol system** designed for simulation-first development of autonomous monitoring and inspection workflows.
+A modular ROS 2 Humble workspace for goal-based robot navigation using TurtleBot3,
+Gazebo, and the Nav2 stack — all running inside a reproducible Docker environment.
 
-This project focuses on building a **practical patrol software layer** that can later be extended to real robots (example, quadrupeds like Unitree Go2).
-
-**Key Capabilities (MVP Focus):**
-- Autonomous waypoint-based patrol
-- Patrol lifecycle control (start/pause/resume/stop)
-- Basic geofence enforcement
-- Simulation-based testing (Gazebo)
-- Extensible architecture for monitoring, vision, and web control
-
-## 🚀 Features (MVP → Advanced)
-
-### 1. Patrol Route Execution
-- **Waypoint Patrol:** Define patrol routes using waypoint sequences
-- **Autonomous Navigation:** Execute patrols using Nav2
-- **Looping Patrol:** Repeat routes continuously
-- **Patrol Control:** Start, pause, resume, and stop patrol execution
-
-### 2. Geofencing (Basic)
-- **Zone Definition:** Define keep-in / keep-out zones (config-based)
-- **Boundary Monitoring:** Continuously track robot position
-- **Breach Handling:**
-  - Stop robot on violation
-  - Log alert event
-
-### 3. Route Management (Planned)
-- Save/load patrol routes
-- Teach & repeat (teleop recording → waypoint extraction)
-
-### 4. Monitoring Layer (Planned)
-- Web-based dashboard
-- Robot state visualization
-- Patrol control interface
-
-### 5. Vision & Detection (Planned)
-- Camera streaming
-- Person detection (YOLO or similar)
-- Event-based alerts
-
-### 6. Advanced Features (Future)
-- Autonomous charging & docking
-- Multi-robot patrol coordination
-- Cloud-based monitoring
-
-## ⚙️ Technical Stack
-
-| Layer | Technology |
-|------|------------|
-| Middleware | ROS 2 (Humble) |
-| Navigation | Nav2 |
-| Simulation | Gazebo |
-| Visualization | RViz |
-| Mapping | SLAM Toolbox / AMCL |
-| Backend (Planned) | FastAPI / Node.js |
-| Frontend (Planned) | React / Vue |
-| Communication | rosbridge / WebSockets |
-
-## 🏗️ System Architecture (Core)
+## Package Structure
 
 ```
-[patrol_manager]
-|
-v
-[NavigateToPose / Nav2]
-|
-v
-[robot_base]
-
-[geofence_monitor] —> /cmd_vel stop on violation
+src/
+├── patrol_bringup/       # Launch files & RViz config — single entry point
+├── patrol_simulation/    # Gazebo world and spawn configuration
+└── patrol_navigation/    # Nav2 params, map files, localization config
 ```
 
-## 🧩 Development Roadmap
+## Prerequisites
 
-### 🔹 Phase 0 — Foundation
-- [ ] Gazebo simulation setup
-- [ ] Robot + map + localization
-- [ ] Nav2 goal navigation working
+- Docker (no ROS installation required on the host)
 
-### 🔹 Phase 1 — Patrol Core (MVP)
-- [ ] Waypoint patrol execution
-- [ ] Looping patrol
-- [ ] Pause / resume / stop
-- [ ] Basic geofencing
+## Setup
 
-### 🔹 Phase 2 — Route Management
-- [ ] Route save/load
-- [ ] Teach & repeat mode
+### 1. Allow X11 forwarding from Docker
 
-### 🔹 Phase 3 — Monitoring
-- [ ] Backend API
-- [ ] Minimal web UI
-- [ ] Robot state visualization
-
-### 🔹 Phase 4 — Vision
-- [ ] Camera streaming
-- [ ] Object detection
-
-### 🔹 Phase 5 — Advanced
-- [ ] Autonomous charging
-- [ ] Docking
-- [ ] Deterrence features
-
-## 🛠️ Getting Started
-
-### 1. Clone Repository
 ```bash
-git clone https://github.com/Kodo-Robotics/kodo-nav2-patrol
-cd kodo-nav2-patrol
+xhost +local:docker
 ```
 
-2. Install Dependencies
+### 2. Build the Docker image
+
 ```bash
-rosdep install --from-paths src --ignore-src -y
+docker compose build
+```
+
+## Usage
+
+### Start the container
+
+```bash
+docker compose up kodo
+```
+
+`setup_env.bash` is sourced automatically on login.
+
+### Build stack
+
+```bash
 colcon build
-source install/setup.bash
 ```
 
-3. Launch Simulation
+After first build, you have to source the environment again.
+
+### Launch the full system (single command)
+
 ```bash
-ros2 launch patrol_bringup sim_launch.py
+ros2 launch patrol_bringup sim_nav.launch.py
 ```
 
-4. Run Navigation
+Starts Gazebo, spawns the robot, brings up Nav2, and opens RViz. Gazebo runs headless by default
+
+### Sending a navigation goal
+
+**Via RViz (preferred):**
+1. Click the **"2D Goal Pose"** button in the RViz toolbar
+2. Click and drag on the map to set the goal position and orientation
+3. The robot will plan a path and navigate to the goal
+
+**Via CLI:**
+
 ```bash
-ros2 launch patrol_bringup nav_launch.py
+ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \
+  "{pose: {header: {frame_id: 'map'}, pose: {position: {x: 1.0, y: 0.5, z: 0.0}, orientation: {w: 1.0}}}}"
 ```
 
-## 📄 License
+## Assumptions & Limitations
 
-Licensed under the Apache 2.0 License.
+- **Map**: Pre-built map is included in `src/patrol_navigation/maps/`.
+- **Localization**: Uses AMCL. If the estimated pose drifts, use **"2D Pose Estimate"** in RViz.
+- **Display**: Requires an X11 server on the host. On headless servers, use a virtual display (e.g., `Xvfb`).
+- **Robot model**: Defaults to TurtleBot3 Waffle. Change `TURTLEBOT3_MODEL` in `setup_env.bash` to use `burger`.
+
