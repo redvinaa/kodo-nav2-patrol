@@ -1,0 +1,5 @@
+# Name of the route to load (maps to <routes_dir>/<route_name>.yaml)
+string route_name
+---
+bool success
+string message
