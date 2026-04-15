@@ -11,7 +11,7 @@ from action_msgs.msg import GoalStatus
 from geometry_msgs.msg import Pose2D, PoseStamped
 from nav2_msgs.action import NavigateToPose
 from patrol_interfaces.msg import PatrolState
-from patrol_interfaces.srv import StartPatrol
+from patrol_interfaces.srv import ListRoutes, StartPatrol
 from rclpy.action import ActionClient
 from rclpy.action.client import ClientGoalHandle
 from rclpy.node import Node
@@ -72,6 +72,9 @@ class PatrolExecutor(Node):
         self._stop_srv = self.create_service(Trigger, "patrol/stop", self._handle_stop)
         self._pause_srv = self.create_service(Trigger, "patrol/pause", self._handle_pause)
         self._resume_srv = self.create_service(Trigger, "patrol/resume", self._handle_resume)
+        self._list_routes_srv = self.create_service(
+            ListRoutes, "patrol/list_routes", self._handle_list_routes
+        )
 
         # Initial state publish
         self._publish_state()
@@ -130,6 +133,15 @@ class PatrolExecutor(Node):
         self._status_pub.publish(msg)
 
     # Service handlers
+
+    def _handle_list_routes(
+        self, _: ListRoutes.Request, response: ListRoutes.Response
+    ) -> ListRoutes.Response:
+        response.route_names = sorted(
+            p.stem for p in Path(self._routes_dir).glob("*.yaml")
+        )
+        self.get_logger().info(f"ListRoutes: found {len(response.route_names)} route(s).")
+        return response
 
     def _handle_start(
         self, request: StartPatrol.Request, response: StartPatrol.Response
