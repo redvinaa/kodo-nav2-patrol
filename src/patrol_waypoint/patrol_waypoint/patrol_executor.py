@@ -12,7 +12,7 @@ from action_msgs.msg import GoalStatus
 from geometry_msgs.msg import Pose2D, PoseStamped
 from nav2_msgs.action import NavigateThroughPoses
 from patrol_interfaces.msg import PatrolState
-from patrol_interfaces.srv import ListRoutes, StartPatrol
+from patrol_interfaces.srv import ListRoutes, StartPatrol, GetRoute
 from rclpy.action import ActionClient
 from rclpy.action.client import ClientGoalHandle
 from rclpy.node import Node
@@ -49,9 +49,15 @@ class PatrolExecutor(Node):
         )
         self._state_pub = self.create_publisher(PatrolState, "patrol/state", latched_qos)
 
+        # Service servers
         self.create_service(StartPatrol, "patrol/start", self._on_start)
         self.create_service(Trigger, "patrol/stop", self._on_stop)
-        self.create_service(ListRoutes, "patrol/list_routes", self._on_list_routes)
+        self.create_service(
+            ListRoutes, "patrol/list_routes", self._on_list_routes
+        )
+        self.create_service(
+            GetRoute, "patrol/get_route", self._on_get_route
+        )
 
         self._publish_state()
         self.get_logger().info("PatrolExecutor ready.")
@@ -95,6 +101,21 @@ class PatrolExecutor(Node):
             self._goal_handle = None
 
     # Service handlers
+
+    def _on_get_route(
+        self, request: GetRoute.Request, response: GetRoute.Response
+    ) -> GetRoute.Response:
+        try:
+            waypoints = self._load_route(request.route_name)
+        except Exception as exc:
+            response.success = False
+            response.message = str(exc)
+            response.waypoints = []
+            return response
+        response.success = True
+        response.message = ""
+        response.waypoints = waypoints
+        return response
 
     def _on_list_routes(
         self, _: ListRoutes.Request, response: ListRoutes.Response

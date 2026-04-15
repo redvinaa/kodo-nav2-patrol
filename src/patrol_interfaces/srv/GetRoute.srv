@@ -1,0 +1,6 @@
+# Name of the route to retrieve
+string route_name
+---
+bool success
+string message
+geometry_msgs/Pose2D[] waypoints
