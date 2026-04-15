@@ -151,6 +151,7 @@ def generate_launch_description():
     # Patrol parameters
     declare_routes_dir_cmd = DeclareLaunchArgument(
         "routes_dir",
+        default_value="/ros2_ws/routes",
         description="Directory containing route YAML files",
     )
     declare_max_retries_cmd = DeclareLaunchArgument(
