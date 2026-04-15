@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
+from rclpy.action.client import ClientGoalHandle
 from geometry_msgs.msg import Pose2D
 
 
@@ -21,7 +22,7 @@ class PatrolContext:
     # Number of consecutive failures on the current waypoint.
     retry_count: int = 0
     # Active Nav2 action goal handle; None when no goal is in-flight.
-    goal_handle: object = None  # rclpy action ClientGoalHandle
+    goal_handle: Optional[ClientGoalHandle] = None
 
     @property
     def n_waypoints(self) -> int:
