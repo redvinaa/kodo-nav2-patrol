@@ -47,6 +47,13 @@ class PatrolExecutor(Node):
 
         # State
         self._state: int = PatrolState.IDLE
+        self._state_names: dict[int, str] = {
+            PatrolState.IDLE: "IDLE",
+            PatrolState.RUNNING: "RUNNING",
+            PatrolState.PAUSED: "PAUSED",
+            PatrolState.COMPLETED: "COMPLETED",
+            PatrolState.FAILED: "FAILED",
+        }
         self._ctx: PatrolContext = PatrolContext()
 
         # Nav2 action client
@@ -108,7 +115,9 @@ class PatrolExecutor(Node):
     # State management
 
     def _set_state(self, new_state: int) -> None:
-        self.get_logger().info(f"State transition: {self._state} -> {new_state}")
+        old_name = self._state_names.get(self._state, str(self._state))
+        new_name = self._state_names.get(new_state, str(new_state))
+        self.get_logger().info(f"State transition: {old_name} -> {new_name}")
         self._state = new_state
         self._publish_state()
 
@@ -173,7 +182,7 @@ class PatrolExecutor(Node):
         self.get_logger().info("Pause requested.")
         if self._state != PatrolState.RUNNING:
             response.success = False
-            response.message = f"Cannot pause: current state is '{self._state}'."
+            response.message = "Cannot pause, not running."
             return response
 
         self._cancel_current_goal()
@@ -192,7 +201,7 @@ class PatrolExecutor(Node):
         self.get_logger().info("Resume requested.")
         if self._state != PatrolState.PAUSED:
             response.success = False
-            response.message = f"Cannot resume: current state is '{self._state}'."
+            response.message = "Cannot resume, not paused."
             return response
 
         self._set_state(PatrolState.RUNNING)
