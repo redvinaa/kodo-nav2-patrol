@@ -7,17 +7,6 @@ Includes sim_nav.launch.py (Gazebo + Nav2 + RViz) and adds:
 Usage
 -----
 ros2 launch patrol_bringup patrol_system.launch.py
-
-Optional overrides (forwarded to sim_nav.launch.py):
-  map:=...
-  params_file:=...
-  use_rviz:=True
-  headless:=True
-  ... (any sim_nav argument)
-
-Patrol-specific overrides:
-  routes_dir:=/ros2_ws/routes
-  max_retries:=3
 """
 
 import os
