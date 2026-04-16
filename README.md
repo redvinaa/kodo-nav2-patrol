@@ -12,7 +12,8 @@ src/
 ├── patrol_interfaces/    # Custom ROS 2 msg/srv definitions
 ├── patrol_navigation/    # Nav2 params, map files, localization config
 ├── patrol_simulation/    # Gazebo world and spawn configuration
-└── patrol_waypoint/      # Waypoint loading, execution logic, state management
+├── patrol_waypoint/      # Waypoint loading, execution logic, state management
+└── patrol_web_interface/ # aiohttp web server — browser-based patrol control UI
 
 routes/
 ├── demo_route.yaml       # Short 4-point patrol route
@@ -61,7 +62,7 @@ ros2 launch patrol_bringup patrol_system.launch.py
 ```
 
 This starts Gazebo (headless), spawns the robot, brings up Nav2, opens RViz,
-and starts the `patrol_executor` node ready to receive patrol commands.
+starts the `patrol_executor` node, and launches the web interface on port 8080.
 
 Optional overrides:
 
@@ -69,8 +70,49 @@ Optional overrides:
 ros2 launch patrol_bringup patrol_system.launch.py \
   routes_dir:=/workspace/routes \
   use_rviz:=True \
-  headless:=False
+  headless:=False \
+  launch_web_interface:=true \
+  web_host:=0.0.0.0 \
+  web_port:=8080
 ```
+
+## Web Interface
+
+When the system is running, open a browser and navigate to:
+
+```
+http://localhost:8080
+```
+
+The UI provides:
+
+- **Live map view** — occupancy grid with robot pose, planned global path, and route waypoints overlaid on a canvas
+- **Route selector** — choose any loaded route from a dropdown
+- **Patrol controls** — Start / Pause / Resume / Stop buttons, enabled/disabled based on current state
+- **Status bar** — live patrol state, active route name, and current waypoint index
+
+The web server can also be launched independently:
+
+```bash
+ros2 launch patrol_web_interface web_interface.launch.py \
+  host:=0.0.0.0 \
+  port:=8080 \
+  routes_dir:=/ros2_ws/routes
+```
+
+### Web server endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/map` | Map image (PNG, converted from PGM) |
+| `GET` | `/api/map_info` | Map metadata (resolution, origin, size) |
+| `GET` | `/api/list_routes` | List available route names |
+| `GET` | `/api/get_route?name=<n>` | Waypoints for a named route |
+| `POST` | `/api/start` | Start patrol `{"route_name": "..."}` |
+| `POST` | `/api/stop` | Stop patrol |
+| `POST` | `/api/pause` | Pause patrol |
+| `POST` | `/api/resume` | Resume patrol |
+| `WS` | `/ws` | Live stream of patrol state, robot pose, and global path |
 
 ### Starting / stopping patrol
 
