@@ -83,6 +83,8 @@ class WebBridgeNode(Node):
         self._get_route_client = self.create_client(GetRoute, "patrol/get_route")
         self._start_client = self.create_client(StartPatrol, "patrol/start")
         self._stop_client = self.create_client(Trigger, "patrol/stop")
+        self._pause_client = self.create_client(Trigger, "patrol/pause")
+        self._resume_client = self.create_client(Trigger, "patrol/resume")
 
     # ROS topic callbacks
 
@@ -170,6 +172,22 @@ class WebBridgeNode(Node):
         result = self._wait_for_future(self._stop_client.call_async(Trigger.Request()))
         if result is None:
             raise RuntimeError("No response from patrol/stop")
+        return {"success": result.success, "message": result.message}
+
+    def call_pause(self) -> dict:
+        if not self._pause_client.wait_for_service(timeout_sec=2.0):
+            raise RuntimeError("patrol/pause not available")
+        result = self._wait_for_future(self._pause_client.call_async(Trigger.Request()))
+        if result is None:
+            raise RuntimeError("No response from patrol/pause")
+        return {"success": result.success, "message": result.message}
+
+    def call_resume(self) -> dict:
+        if not self._resume_client.wait_for_service(timeout_sec=2.0):
+            raise RuntimeError("patrol/resume not available")
+        result = self._wait_for_future(self._resume_client.call_async(Trigger.Request()))
+        if result is None:
+            raise RuntimeError("No response from patrol/resume")
         return {"success": result.success, "message": result.message}
 
 
@@ -326,6 +344,24 @@ async def start_patrol(body: StartRequest):
 async def stop_patrol():
     try:
         result = await _loop.run_in_executor(None, _node.call_stop)
+        return result
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.post("/api/pause")
+async def pause_patrol():
+    try:
+        result = await _loop.run_in_executor(None, _node.call_pause)
+        return result
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.post("/api/resume")
+async def resume_patrol():
+    try:
+        result = await _loop.run_in_executor(None, _node.call_resume)
         return result
     except Exception as exc:
         raise HTTPException(status_code=503, detail=str(exc))

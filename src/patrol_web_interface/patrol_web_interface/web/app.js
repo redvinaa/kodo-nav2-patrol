@@ -193,6 +193,22 @@ function App() {
       .catch(() => setStatusMsg("Start failed"));
   };
 
+  const handlePause = () => {
+    setStatusMsg("Pausing...");
+    fetch(`${API}/api/pause`, { method: "POST" })
+      .then(r => r.json())
+      .then(d => setStatusMsg(d.message || "Paused"))
+      .catch(() => setStatusMsg("Pause failed"));
+  };
+
+  const handleResume = () => {
+    setStatusMsg("Resuming...");
+    fetch(`${API}/api/resume`, { method: "POST" })
+      .then(r => r.json())
+      .then(d => setStatusMsg(d.message || "Resumed"))
+      .catch(() => setStatusMsg("Resume failed"));
+  };
+
   const handleStop = () => {
     setStatusMsg("Stopping...");
     fetch(`${API}/api/stop`, { method: "POST" })
@@ -211,8 +227,10 @@ function App() {
           <option value="">-- select route --</option>
           {routes.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
-        <button className="btn-start" onClick={handleStart} disabled={!selectedRoute}>Start</button>
-        <button className="btn-stop" onClick={handleStop}>Stop</button>
+        <button className="btn-start"  onClick={handleStart}  disabled={!selectedRoute || displayState.state_name === "RUNNING" || displayState.state_name === "PAUSED"}>Start</button>
+        <button className="btn-pause"  onClick={handlePause}  disabled={displayState.state_name !== "RUNNING"}>Pause</button>
+        <button className="btn-resume" onClick={handleResume} disabled={displayState.state_name !== "PAUSED"}>Resume</button>
+        <button className="btn-stop"   onClick={handleStop}   disabled={displayState.state_name === "IDLE"}>Stop</button>
         <div className="status-bar">
           <span>State: <b className={stateClass}>{displayState.state_name}</b></span>
           {displayState.route_name && <span>Route: <b>{displayState.route_name}</b></span>}

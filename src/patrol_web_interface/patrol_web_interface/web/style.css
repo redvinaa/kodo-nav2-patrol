@@ -9,10 +9,14 @@ select { background: #333; color: #e0e0e0; border: 1px solid #555; padding: 4px 
 
 button { padding: 5px 14px; font-family: monospace; font-size: 13px; border: none; cursor: pointer; border-radius: 3px; }
 button:disabled { opacity: 0.4; cursor: default; }
-.btn-start { background: #2a7a2a; color: #fff; }
-.btn-start:hover { background: #3a9a3a; }
-.btn-stop  { background: #7a2a2a; color: #fff; }
-.btn-stop:hover  { background: #9a3a3a; }
+.btn-start  { background: #2a7a2a; color: #fff; }
+.btn-start:hover  { background: #3a9a3a; }
+.btn-pause  { background: #7a5a00; color: #fff; }
+.btn-pause:hover  { background: #9a7a00; }
+.btn-resume { background: #1a5a7a; color: #fff; }
+.btn-resume:hover { background: #2a7a9a; }
+.btn-stop   { background: #7a2a2a; color: #fff; }
+.btn-stop:hover   { background: #9a3a3a; }
 
 .status-bar { font-size: 12px; margin-left: auto; color: #aaa; }
 .status-bar span { margin-left: 16px; }
