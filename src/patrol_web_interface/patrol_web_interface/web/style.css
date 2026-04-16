@@ -1,0 +1,30 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: monospace; background: #1a1a1a; color: #e0e0e0; display: flex; flex-direction: column; height: 100vh; }
+#root { display: flex; flex-direction: column; height: 100%; }
+
+.toolbar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: #252525; border-bottom: 1px solid #333; flex-shrink: 0; }
+.toolbar h1 { font-size: 14px; color: #aaa; margin-right: 8px; }
+
+select { background: #333; color: #e0e0e0; border: 1px solid #555; padding: 4px 8px; font-family: monospace; font-size: 13px; }
+
+button { padding: 5px 14px; font-family: monospace; font-size: 13px; border: none; cursor: pointer; border-radius: 3px; }
+button:disabled { opacity: 0.4; cursor: default; }
+.btn-start { background: #2a7a2a; color: #fff; }
+.btn-start:hover { background: #3a9a3a; }
+.btn-stop  { background: #7a2a2a; color: #fff; }
+.btn-stop:hover  { background: #9a3a3a; }
+
+.status-bar { font-size: 12px; margin-left: auto; color: #aaa; }
+.status-bar span { margin-left: 16px; }
+.state-IDLE      { color: #888; }
+.state-RUNNING   { color: #4caf50; }
+.state-PAUSED    { color: #ff9800; }
+.state-COMPLETED { color: #2196f3; }
+.state-FAILED    { color: #f44336; }
+
+.map-container { flex: 1; position: relative; overflow: hidden; background: #111; display: flex; align-items: center; justify-content: center; }
+canvas { display: block; background: #111; }
+.msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #555; font-size: 13px; }
+
+.legend { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 6px 10px; font-size: 11px; line-height: 1.8; }
+.legend span { display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: middle; }
