@@ -48,6 +48,7 @@ function App() {
   const patrolStateRef = useRef({ state_name: "IDLE", current_waypoint_index: 0, n_waypoints: 0, route_name: "" });
   const waypointsRef  = useRef([]);
   const rafRef        = useRef(null);
+  const targetSizeRef  = useRef({ w: 0, h: 0 });
 
   const [routes, setRoutes]             = useState([]);
   const [selectedRoute, setSelectedRoute] = useState("");
@@ -78,12 +79,10 @@ function App() {
     if (!containerRef.current) return;
     const obs = new ResizeObserver(() => {
       const info = mapInfoRef.current;
-      const canvas = canvasRef.current;
-      if (!info || !canvas) return;
+      if (!info || !containerRef.current) return;
       const { w, h } = letterbox(info.width, info.height,
         containerRef.current.clientWidth, containerRef.current.clientHeight);
-      canvas.width  = w;
-      canvas.height = h;
+      targetSizeRef.current = { w, h };
     });
     obs.observe(containerRef.current);
     return () => obs.disconnect();
@@ -95,8 +94,7 @@ function App() {
     const info = mapInfoRef.current;
     const { w, h } = letterbox(info.width, info.height,
       containerRef.current.clientWidth, containerRef.current.clientHeight);
-    canvasRef.current.width  = w;
-    canvasRef.current.height = h;
+    targetSizeRef.current = { w, h };
   }, [mapLoaded]);
 
   // WebSocket — write directly into refs, no setState for live data
@@ -133,6 +131,12 @@ function App() {
       const img    = mapImgRef.current;
       const info   = mapInfoRef.current;
       if (!canvas || !img || !info || canvas.width === 0) return;
+
+      const { w: tw, h: th } = targetSizeRef.current;
+      if (tw > 0 && (canvas.width !== tw || canvas.height !== th)) {
+        canvas.width  = tw;
+        canvas.height = th;
+      }
 
       const ctx = canvas.getContext("2d");
       const W = canvas.width, H = canvas.height;
