@@ -2,6 +2,17 @@ const { useState, useEffect, useRef } = React;
 
 const API = "";
 
+function apiPost(path, body, loadingMsg, setState) {
+  setState(loadingMsg);
+  fetch(`${API}${path}`, {
+    method: "POST",
+    ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
+  })
+    .then(r => r.json())
+    .then(d => setState(d.message || loadingMsg.replace("...", "ed")))
+    .catch(() => setState(`${loadingMsg.replace("ing...", "")} failed`));
+}
+
 function letterbox(mapW, mapH, cw, ch) {
   const scale = Math.min(cw / mapW, ch / mapH);
   return { w: Math.round(mapW * scale), h: Math.round(mapH * scale) };
@@ -182,39 +193,19 @@ function App() {
 
   const handleStart = () => {
     if (!selectedRoute) return;
-    setStatusMsg("Starting...");
-    fetch(`${API}/api/start`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ route_name: selectedRoute }),
-    })
-      .then(r => r.json())
-      .then(d => setStatusMsg(d.message || "Started"))
-      .catch(() => setStatusMsg("Start failed"));
+    apiPost("/api/start", { route_name: selectedRoute }, "Starting...", setStatusMsg);
   };
 
   const handlePause = () => {
-    setStatusMsg("Pausing...");
-    fetch(`${API}/api/pause`, { method: "POST" })
-      .then(r => r.json())
-      .then(d => setStatusMsg(d.message || "Paused"))
-      .catch(() => setStatusMsg("Pause failed"));
+    apiPost("/api/pause", null, "Pausing...", setStatusMsg);
   };
 
   const handleResume = () => {
-    setStatusMsg("Resuming...");
-    fetch(`${API}/api/resume`, { method: "POST" })
-      .then(r => r.json())
-      .then(d => setStatusMsg(d.message || "Resumed"))
-      .catch(() => setStatusMsg("Resume failed"));
+    apiPost("/api/resume", null, "Resuming...", setStatusMsg);
   };
 
   const handleStop = () => {
-    setStatusMsg("Stopping...");
-    fetch(`${API}/api/stop`, { method: "POST" })
-      .then(r => r.json())
-      .then(d => setStatusMsg(d.message || "Stopped"))
-      .catch(() => setStatusMsg("Stop failed"));
+    apiPost("/api/stop", null, "Stopping...", setStatusMsg);
   };
 
   const stateClass = `state-${displayState.state_name}`;
