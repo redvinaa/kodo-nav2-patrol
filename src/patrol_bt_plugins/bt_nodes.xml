@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<root BTCPP_format="4">
+  <TreeNodesModel>
+    <Control ID="PauseResumeController">
+      <input_port name="pause_service_name">Name of the service used to trigger a pause</input_port>
+      <input_port name="resume_service_name">Name of the service used to trigger a resume</input_port>
+    </Control>
+    <Control ID="PersistentSequence">
+        <inout_port name="current_child_idx">
+            Blackboard key that stores the index of the next child to execute
+        </inout_port>
+    </Control>
+  </TreeNodesModel>
+</root>
