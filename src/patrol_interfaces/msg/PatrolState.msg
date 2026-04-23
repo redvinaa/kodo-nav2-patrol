@@ -16,3 +16,6 @@ int32 current_waypoint_index
 
 # Total number of waypoints in the active route
 int32 n_waypoints
+
+# Number of consecutive navigation retries on the current route attempt
+int32 retry_count
