@@ -4,7 +4,7 @@ project(patrol_bringup)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY launch rviz
+  DIRECTORY launch rviz behavior_trees
   DESTINATION share/${PROJECT_NAME}
 )
 
