@@ -8,7 +8,7 @@
 #include <string>
 #include <thread>
 
-#include "behaviortree_cpp/control_node.h"
+#include "behaviortree_cpp_v3/control_node.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_srvs/srv/trigger.hpp"
 

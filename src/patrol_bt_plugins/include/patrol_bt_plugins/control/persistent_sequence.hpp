@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "behaviortree_cpp/control_node.h"
+#include "behaviortree_cpp_v3/control_node.h"
 
 namespace patrol_bt_plugins
 {

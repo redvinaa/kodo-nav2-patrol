@@ -7,12 +7,12 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(behaviortree_cpp REQUIRED)
+find_package(behaviortree_cpp_v3 REQUIRED)
 find_package(std_srvs REQUIRED)
 
 set(dependencies
   rclcpp
-  behaviortree_cpp
+  behaviortree_cpp_v3
   std_srvs
 )
 

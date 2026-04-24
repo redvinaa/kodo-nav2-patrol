@@ -2,7 +2,7 @@
 
 #include <thread>
 
-#include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
 #include "patrol_bt_plugins/control/pause_resume_controller.hpp"
 #include "rclcpp/callback_group.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
@@ -88,7 +88,6 @@ BT::NodeStatus PauseResumeController::tick()
         case BT::NodeStatus::RUNNING:
           break;
         case BT::NodeStatus::SUCCESS:
-        case BT::NodeStatus::SKIPPED:
           RCLCPP_INFO(node_->get_logger(), "PauseResumeController: switched to state PAUSED");
           state_ = PAUSED;
           break;
@@ -112,7 +111,6 @@ BT::NodeStatus PauseResumeController::tick()
         case BT::NodeStatus::RUNNING:
           break;
         case BT::NodeStatus::SUCCESS:
-        case BT::NodeStatus::SKIPPED:
           RCLCPP_INFO(node_->get_logger(), "PauseResumeController: switched to state UNPAUSED");
           state_ = UNPAUSED;
           break;
@@ -132,7 +130,6 @@ BT::NodeStatus PauseResumeController::tick()
       switch (child_status) {
         case BT::NodeStatus::RUNNING:
         case BT::NodeStatus::SUCCESS:
-        case BT::NodeStatus::SKIPPED:
           break;
         case BT::NodeStatus::FAILURE:
           RCLCPP_ERROR(node_->get_logger(), "PauseResumeController: PAUSED child returned FAILURE");
@@ -150,7 +147,6 @@ BT::NodeStatus PauseResumeController::tick()
       case BT::NodeStatus::RUNNING:
         break;
       case BT::NodeStatus::SUCCESS:
-      case BT::NodeStatus::SKIPPED:
         setStatus(BT::NodeStatus::SUCCESS);
         break;
       case BT::NodeStatus::FAILURE:

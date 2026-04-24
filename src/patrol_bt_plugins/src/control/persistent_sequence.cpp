@@ -1,6 +1,6 @@
 // Based on navigation2/nav2_behavior_tree
 
-#include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
 #include "patrol_bt_plugins/control/persistent_sequence.hpp"
 
 namespace patrol_bt_plugins
@@ -45,7 +45,6 @@ BT::NodeStatus PersistentSequence::tick()
         return child_status;
 
       case BT::NodeStatus::SUCCESS:
-      case BT::NodeStatus::SKIPPED:
         current_child_idx++;
         setOutput("current_child_idx", current_child_idx);
         break;
