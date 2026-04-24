@@ -31,14 +31,14 @@ PauseResumeController::PauseResumeController(
   pause_srv_ = node_->create_service<Trigger>(
     pause_service_name,
     std::bind(&PauseResumeController::pause_service_callback, this, _1, _2),
-    rclcpp::ServicesQoS(), cb_group_);
+    rmw_qos_profile_services_default, cb_group_);
 
   std::string resume_service_name;
   getInput("resume_service_name", resume_service_name);
   resume_srv_ = node_->create_service<Trigger>(
     resume_service_name,
     std::bind(&PauseResumeController::resume_service_callback, this, _1, _2),
-    rclcpp::ServicesQoS(), cb_group_);
+    rmw_qos_profile_services_default, cb_group_);
 
   spinner_thread_ = std::make_unique<std::thread>(
     [&]() {
