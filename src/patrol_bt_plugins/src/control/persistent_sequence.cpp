@@ -1,3 +1,5 @@
+// Based on navigation2/nav2_behavior_tree
+
 #include "behaviortree_cpp/bt_factory.h"
 #include "patrol_bt_plugins/control/persistent_sequence.hpp"
 

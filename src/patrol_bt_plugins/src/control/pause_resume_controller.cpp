@@ -1,3 +1,5 @@
+// Based on navigation2/nav2_behavior_tree
+
 #include <thread>
 
 #include "behaviortree_cpp/bt_factory.h"
