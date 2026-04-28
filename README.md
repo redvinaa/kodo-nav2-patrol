@@ -67,7 +67,6 @@ Optional overrides:
 ```bash
 ros2 launch patrol_bringup patrol_system.launch.py \
   routes_dir:=/workspace/routes \
-  max_retries:=3 \
   use_rviz:=True \
   headless:=False
 ```

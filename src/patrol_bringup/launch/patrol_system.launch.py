@@ -35,7 +35,6 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     routes_dir = LaunchConfiguration("routes_dir")
-    max_retries = LaunchConfiguration("max_retries")
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         "use_sim_time",
@@ -46,11 +45,6 @@ def generate_launch_description():
         "routes_dir",
         default_value="/ros2_ws/routes",
         description="Directory containing route YAML files",
-    )
-    declare_max_retries_cmd = DeclareLaunchArgument(
-        "max_retries",
-        default_value="3",
-        description="Maximum navigation retries per waypoint before FAILED",
     )
 
     sim_nav_cmd = IncludeLaunchDescription(
@@ -68,7 +62,6 @@ def generate_launch_description():
             {
                 "use_sim_time": use_sim_time,
                 "routes_dir": routes_dir,
-                "max_retries": max_retries,
             }
         ],
     )
@@ -77,7 +70,6 @@ def generate_launch_description():
 
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_routes_dir_cmd)
-    ld.add_action(declare_max_retries_cmd)
 
     ld.add_action(sim_nav_cmd)
     ld.add_action(patrol_executor_cmd)

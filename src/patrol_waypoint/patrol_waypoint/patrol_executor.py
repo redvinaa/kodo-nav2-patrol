@@ -27,22 +27,17 @@ class PatrolExecutor(Node):
         super().__init__("patrol_executor")
 
         self.declare_parameter("routes_dir", "")
-        self.declare_parameter("max_retries", 3)
+
 
         self._routes_dir = self.get_parameter("routes_dir").get_parameter_value().string_value
         if not self._routes_dir or not Path(self._routes_dir).is_dir():
             raise RuntimeError(
                 f"Invalid 'routes_dir' parameter: '{self._routes_dir}' is not a directory."
             )
-        self._max_retries: int = (
-            self.get_parameter("max_retries").get_parameter_value().integer_value
-        )
-
         # Patrol state
         self._state: int = PatrolState.IDLE
         self._route_name: str = ""
         self._waypoints: List[Pose2D] = []
-        self._retry_count: int = 0
         self._goal_handle: Optional[ClientGoalHandle] = None
 
         self._nav_client = ActionClient(self, NavigateThroughPoses, "navigate_through_poses")
@@ -92,7 +87,6 @@ class PatrolExecutor(Node):
         msg.state = self._state
         msg.route_name = self._route_name
         msg.n_waypoints = len(self._waypoints)
-        msg.retry_count = self._retry_count
         self._state_pub.publish(msg)
 
     def _cancel_goal(self) -> None:
@@ -119,7 +113,6 @@ class PatrolExecutor(Node):
             response.message = str(exc)
             return response
         self._route_name = request.route_name
-        self._retry_count = 0
         self._set_state(PatrolState.RUNNING)
         if not self._nav_client.server_is_ready():
             self.get_logger().error("navigate_through_poses action server not available.")
@@ -164,7 +157,7 @@ class PatrolExecutor(Node):
         handle: ClientGoalHandle = future.result()
         if handle is None or not handle.accepted:
             self.get_logger().error("NavigateThroughPoses goal rejected.")
-            self._handle_failure()
+            self._set_state(PatrolState.FAILED)
             return
         self._goal_handle = handle
         handle.get_result_async().add_done_callback(self._on_goal_result)
@@ -177,22 +170,11 @@ class PatrolExecutor(Node):
         status = result.status if result is not None else GoalStatus.STATUS_UNKNOWN
         if status == GoalStatus.STATUS_SUCCEEDED:
             self.get_logger().info("All waypoints reached. Patrol COMPLETED.")
-            self._retry_count = 0
             self._set_state(PatrolState.COMPLETED)
         else:
             self.get_logger().warning(f"NavigateThroughPoses ended with status {status}.")
-            self._handle_failure()
-
-    def _handle_failure(self) -> None:
-        self._retry_count += 1
-        if self._retry_count <= self._max_retries:
-            self.get_logger().warning(
-                f"Retrying route (attempt {self._retry_count}/{self._max_retries})…"
-            )
-            self._dispatch_goal()
-        else:
-            self.get_logger().error("Route failed, max retries exceeded.")
             self._set_state(PatrolState.FAILED)
+
 
 
 def main(args=None) -> None:
