@@ -150,7 +150,7 @@ controller_server:
       closed_loop: false
 
       retry_attempt_limit: 10
-      time_steps: 80
+      time_steps: 50
       model_dt: 0.05
       batch_size: 2000
       vx_std: 0.2
@@ -166,7 +166,10 @@ controller_server:
       az_max: 10.0
 
       iteration_count: 1
-      prune_distance: 1.7
+      # Note: Keep prune distance same (or smaller) than RemovePassedGoals radius in BT,
+      # overwise controller can malfuction when there's a loop in path.
+      # Also, prune distance should be at least dt * steps * vx
+      prune_distance: 0.7
       transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
