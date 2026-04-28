@@ -8,7 +8,8 @@ Gazebo, and the Nav2 stack — all running inside a reproducible Docker environm
 ```
 src/
 ├── patrol_bringup/       # Launch files & RViz config — single entry point
-├── patrol_interfaces/    # Custom ROS 2 msg/srv definitions (PatrolStatus, StartPatrol)
+├── patrol_bt_plugins/    # Custom BehaviorTree.CPP nodes (pause/resume control)
+├── patrol_interfaces/    # Custom ROS 2 msg/srv definitions
 ├── patrol_navigation/    # Nav2 params, map files, localization config
 ├── patrol_simulation/    # Gazebo world and spawn configuration
 └── patrol_waypoint/      # Waypoint loading, execution logic, state management
@@ -96,6 +97,12 @@ ros2 service call /patrol/resume std_srvs/srv/Trigger "{}"
 
 ```bash
 ros2 service call /patrol/stop std_srvs/srv/Trigger "{}"
+```
+
+**List available routes**:
+
+```bash
+ros2 service call /patrol/list_routes patrol_interfaces/srv/ListRoutes
 ```
 
 ### Monitoring patrol state
