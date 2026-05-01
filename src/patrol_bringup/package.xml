@@ -27,6 +27,8 @@
   <!-- Sibling packages -->
   <exec_depend>patrol_simulation</exec_depend>
   <exec_depend>patrol_navigation</exec_depend>
+  <exec_depend>patrol_waypoint</exec_depend>
+  <exec_depend>patrol_interfaces</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
