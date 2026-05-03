@@ -9,8 +9,8 @@ function apiPost(path, body, loadingMsg, setState) {
     ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
   })
     .then(r => r.json())
-    .then(d => setState(d.message || loadingMsg.replace("...", "ed")))
-    .catch(() => setState(`${loadingMsg.replace("ing...", "")} failed`));
+    .then(d => setState(d.message || "Done"))
+    .catch(() => setState("Request failed"));
 }
 
 function letterbox(mapW, mapH, cw, ch) {
@@ -223,8 +223,8 @@ function App() {
           {routes.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
         <button className="btn-start"  onClick={handleStart}  disabled={!selectedRoute || displayState.state_name === "RUNNING" || displayState.state_name === "PAUSED"}>Start</button>
-        <button className="btn-pause"  onClick={handlePause}  disabled={displayState.state_name !== "RUNNING"}>Pause</button>
-        <button className="btn-resume" onClick={handleResume} disabled={displayState.state_name !== "PAUSED"}>Resume</button>
+        <button className="btn-pause"  onClick={handlePause}  disabled={displayState.state_name === "IDLE"}>Pause</button>
+        <button className="btn-resume" onClick={handleResume} disabled={displayState.state_name === "IDLE"}>Resume</button>
         <button className="btn-stop"   onClick={handleStop}   disabled={displayState.state_name === "IDLE"}>Stop</button>
         <div className="status-bar">
           <span>State: <b className={stateClass}>{displayState.state_name}</b></span>

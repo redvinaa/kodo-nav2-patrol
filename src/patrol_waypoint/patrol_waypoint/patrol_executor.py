@@ -38,6 +38,7 @@ class PatrolExecutor(Node):
         self._state: int = PatrolState.IDLE
         self._route_name: str = ""
         self._waypoints: List[Pose2D] = []
+        self._current_waypoint_index: int = 0
         self._goal_handle: Optional[ClientGoalHandle] = None
 
         self._nav_client = ActionClient(self, NavigateThroughPoses, "navigate_through_poses")
@@ -93,6 +94,7 @@ class PatrolExecutor(Node):
         msg.state = self._state
         msg.route_name = self._route_name
         msg.n_waypoints = len(self._waypoints)
+        msg.current_waypoint_index = self._current_waypoint_index
         self._state_pub.publish(msg)
 
     def _cancel_goal(self) -> None:
@@ -106,7 +108,7 @@ class PatrolExecutor(Node):
         self, request: GetRoute.Request, response: GetRoute.Response
     ) -> GetRoute.Response:
         try:
-            waypoints = self._load_route(request.route_name)
+            waypoints = self._load_waypoints(request.route_name)
         except Exception as exc:
             response.success = False
             response.message = str(exc)
@@ -150,6 +152,7 @@ class PatrolExecutor(Node):
         self._cancel_goal()
         self._route_name = ""
         self._waypoints = []
+        self._current_waypoint_index = 0
         self._set_state(PatrolState.IDLE)
         response.success = True
         response.message = "Patrol stopped."
@@ -171,8 +174,13 @@ class PatrolExecutor(Node):
         self.get_logger().info(
             f"Sending {len(goal.poses)} waypoint(s) for route '{self._route_name}'."
         )
-        future = self._nav_client.send_goal_async(goal)
+        future = self._nav_client.send_goal_async(goal, feedback_callback=self._on_feedback)
         future.add_done_callback(self._on_goal_accepted)
+
+    def _on_feedback(self, feedback_msg) -> None:
+        remaining = feedback_msg.feedback.number_of_poses_remaining
+        self._current_waypoint_index = len(self._waypoints) - remaining
+        self._publish_state()
 
     def _on_goal_accepted(self, future) -> None:
         handle: ClientGoalHandle = future.result()
@@ -192,6 +200,9 @@ class PatrolExecutor(Node):
         if status == GoalStatus.STATUS_SUCCEEDED:
             self.get_logger().info("All waypoints reached. Patrol COMPLETED.")
             self._set_state(PatrolState.COMPLETED)
+        elif status == GoalStatus.STATUS_CANCELED:
+            self.get_logger().info("Navigation cancelled externally. Patrol PAUSED.")
+            self._set_state(PatrolState.PAUSED)
         else:
             self.get_logger().warning(f"NavigateThroughPoses ended with status {status}.")
             self._set_state(PatrolState.FAILED)
