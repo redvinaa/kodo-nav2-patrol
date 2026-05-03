@@ -88,7 +88,7 @@ The UI provides:
 
 - **Live map view** — occupancy grid with robot pose, planned global path, and route waypoints overlaid on a canvas
 - **Route selector** — choose any loaded route from a dropdown
-- **Patrol controls** — Start / Pause / Resume / Stop buttons, enabled/disabled based on current state
+- **Patrol controls** — Start / Pause / Resume / Stop buttons
 - **Status bar** — live patrol state, active route name, and current waypoint index
 
 The web server can also be launched independently:
