@@ -218,7 +218,7 @@ function App() {
     <div id="root">
       <div className="toolbar">
         <h1>Patrol Control</h1>
-        <select value={selectedRoute} onChange={e => setSelectedRoute(e.target.value)}>
+        <select value={selectedRoute} onChange={e => setSelectedRoute(e.target.value)} disabled={displayState.state_name !== "IDLE"}>
           <option value="">-- select route --</option>
           {routes.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
