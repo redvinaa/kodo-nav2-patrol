@@ -53,12 +53,8 @@ class PatrolExecutor(Node):
         # Service servers
         self.create_service(StartPatrol, "patrol/start", self._on_start)
         self.create_service(Trigger, "patrol/stop", self._on_stop)
-        self.create_service(
-            ListRoutes, "patrol/list_routes", self._on_list_routes
-        )
-        self.create_service(
-            GetRoute, "patrol/get_route", self._on_get_route
-        )
+        self.create_service(ListRoutes, "patrol/list_routes", self._on_list_routes)
+        self.create_service(GetRoute, "patrol/get_route", self._on_get_route)
 
         self._publish_state()
         self.get_logger().info("PatrolExecutor ready.")
